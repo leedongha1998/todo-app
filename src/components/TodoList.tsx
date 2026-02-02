@@ -1,26 +1,84 @@
+// ============================================================
+// 📚 학습 목표: 배열 렌더링과 React.memo 최적화
+// ============================================================
+//
+// 이 컴포넌트에서 배울 핵심 개념:
+// 1. 배열 map(): 배열을 JSX 요소 목록으로 변환
+// 2. key prop: React가 각 요소를 구분하기 위한 고유 식별자
+// 3. React.memo: 불필요한 리렌더링 방지를 위한 메모이제이션
+// 4. readonly 타입: 배열이 수정되지 않음을 명시
+//
+// 📌 key가 왜 필요한가요?
+// React는 key를 보고 어떤 항목이 추가/삭제/변경되었는지 판단합니다.
+// key가 없으면 전체 목록을 다시 렌더링해야 해서 성능이 나빠집니다.
+//
+// 📌 React.memo란?
+// 컴포넌트의 props가 변경되지 않으면 리렌더링을 건너뜁니다.
+// 목록 컴포넌트처럼 자주 리렌더링될 수 있는 곳에 유용합니다.
+// ============================================================
+
 import React from "react";
 import type { Todo } from "../types";
 import TodoItem from "./TodoItem";
 
+// ============================================================
+// Props 타입 정의
+// ============================================================
+// 💡 힌트: readonly Todo[]는 배열이 수정되지 않음을 보장합니다
 interface TodosProps {
-  todos: readonly Todo[];
+  todos: readonly Todo[]; // 읽기 전용 배열
   onToggle: (id: number) => void;
   onDelete: (id: number) => void;
 }
 
 const TodoList = ({ todos, onToggle, onDelete }: TodosProps) => {
+  // ============================================================
+  // 배열을 JSX로 렌더링
+  // ============================================================
+  //
+  // 💡 힌트: map() 메서드로 각 todo를 TodoItem 컴포넌트로 변환
+  //
+  // 📝 작성해야 할 코드:
+  // return (
+  //   <>
+  //     {todos.map((todo) => (
+  //       <TodoItem
+  //         key={todo.id}      // ⚠️ key는 필수!
+  //         todo={todo}
+  //         onToggle={onToggle}
+  //         onDelete={onDelete}
+  //       />
+  //     ))}
+  //   </>
+  // );
+  // ============================================================
+
   return (
     <>
-      {todos.map((todo) => (
-        <TodoItem
-          key={todo.id}
-          todo={todo}
-          onToggle={onToggle}
-          onDelete={onDelete}
-        />
-      ))}
+      {/* TODO: todos.map()으로 TodoItem 컴포넌트들을 렌더링하세요 */}
+      {/*
+        힌트:
+        {todos.map((todo) => (
+          <TodoItem
+            key={???}          // 각 항목의 고유 id
+            todo={???}         // 할 일 데이터
+            onToggle={???}     // 토글 함수
+            onDelete={???}     // 삭제 함수
+          />
+        ))}
+      */}
     </>
   );
 };
 
+// ============================================================
+// React.memo로 컴포넌트 최적화
+// ============================================================
+// props(todos, onToggle, onDelete)가 변경되지 않으면
+// 이 컴포넌트는 리렌더링되지 않습니다.
+//
+// 💡 힌트: 부모 컴포넌트에서 useCallback을 사용해
+// onToggle, onDelete 함수의 참조를 안정화하면
+// React.memo가 제대로 동작합니다.
+// ============================================================
 export default React.memo(TodoList);
